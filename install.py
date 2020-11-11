@@ -24,7 +24,7 @@ if not install_path:
     # Attempt to find the installation directory based on `ghidraRun`
     ghidra_run_path = shutil.which("ghidraRun")
     if not ghidra_run_path:
-        print("Could not find Ghidra installation, run with --install-path")
+        print("Could not find Ghidra installation, run with --path")
         exit(-1)
     else:
         install_path = Path(ghidra_run_path).parents[0]
