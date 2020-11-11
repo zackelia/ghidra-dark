@@ -6,6 +6,9 @@ from pathlib import Path
 import subprocess
 import urllib.request
 
+from tcd_browser import TCDBrowser
+from preferences import preferences
+
 parser = argparse.ArgumentParser(description="Install Ghidra dark theme")
 parser.add_argument("--path", dest="install_path", type=str, default=None,
                     help="The installation path for Ghidra")
@@ -100,6 +103,8 @@ if not using_system:
     with open(perferences_path, "a") as fp:
         fp.write("LastLookAndFeel=System\n")
 
-# Backup the current tcd and copy the new one
+# Backup the current tcd
 shutil.copy(code_browser_path, code_browser_bak_path)
-shutil.copy("_code_browser.tcd", code_browser_path)
+
+browser = TCDBrowser(code_browser_path)
+browser.update(preferences)
