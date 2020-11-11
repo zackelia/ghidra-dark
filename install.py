@@ -14,8 +14,10 @@ parser.add_argument("--path", dest="install_path", type=str, default=None,
                     help="The installation path for Ghidra")
 args = parser.parse_args()
 
-# Ghidra cannot be running during the installation
-if subprocess.run(["pgrep", "-f", "ghidra"], stdout=subprocess.PIPE).returncode == 0:
+# Ghidra cannot be running during the installation, also ignore our own process
+# if ghidra is in an argument
+p = subprocess.run(["pgrep", "-f", "ghidra"], stdout=subprocess.PIPE)
+if p.returncode == 0 and p.stdout.strip() != str(os.getpid()).encode():
     print("Please close any running Ghidra instances")
     exit(-1)
 
