@@ -44,7 +44,7 @@ class TCDBrowser:
         categories = [_ for _ in tool_options.iter() if _.tag == "CATEGORY" and "NAME" in _.attrib]
 
         for category in categories:
-            for preference, option in preferences[category.get("NAME")].items():
+            for preference, option in preferences.get(category.get("NAME"), {}).items():
                 element = [_ for _ in category.iter() if _.get("NAME") == preference]
 
                 # Check if the preference exists or not
