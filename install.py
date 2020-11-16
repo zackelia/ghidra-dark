@@ -97,7 +97,7 @@ else:
     version_path = f".ghidra-{version}"
 
 ghidra_home_path = os.path.join(Path.home(), ".ghidra", version_path)
-perferences_path = os.path.join(ghidra_home_path, "preferences")
+preferences_path = os.path.join(ghidra_home_path, "preferences")
 code_browser_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd")
 code_browser_bak_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd.bak")
 
@@ -105,7 +105,7 @@ print(f"Using Ghidra home path: {ghidra_home_path}")
 
 # Check if the current L&f is system
 using_system = False
-with open(perferences_path, "r") as fp:
+with open(preferences_path, "r") as fp:
     for line in fp:
         if "LastLookAndFeel=System" in line:
             using_system = True
@@ -113,7 +113,7 @@ with open(perferences_path, "r") as fp:
 
 # Set the L&f to system
 if not using_system:
-    with open(perferences_path, "a") as fp:
+    with open(preferences_path, "a") as fp:
         fp.write("LastLookAndFeel=System\n")
 
 # Backup the current tcd
