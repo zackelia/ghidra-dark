@@ -14,10 +14,19 @@ parser.add_argument("--path", dest="install_path", type=str, default=None,
                     help="The installation path for Ghidra")
 args = parser.parse_args()
 
-# Ghidra cannot be running during the installation, also ignore our own process
-# if ghidra is in an argument
-p = subprocess.run(["pgrep", "-f", "ghidra"], stdout=subprocess.PIPE)
-if p.returncode == 0 and p.stdout.strip() != str(os.getpid()).encode():
+if os.name == "nt":
+    find_ghidra = "WMIC path win32_process get Commandline"
+    launch_sh = "launch.bat"
+    install_dir = ";%INSTALL_DIR%"
+    cpath = "set CPATH="
+else:
+    find_ghidra = "ps -ax"
+    launch_sh = "launch.sh"
+    install_dir = ":${INSTALL_DIR}/"
+    cpath = "CPATH="
+
+out = subprocess.check_output(find_ghidra.split())
+if b"ghidrarun" in out.lower():
     print("Please close any running Ghidra instances")
     exit(-1)
 
@@ -53,15 +62,17 @@ if not os.path.exists(flatlaf_path):
     with open(flatlaf_path, "wb") as fp:
         fp.write(response.read())
 
-launch_sh_path = os.path.join(install_path, "support", "launch.sh")
+launch_sh_path = os.path.join(install_path, "support", launch_sh)
 launch_properties_path = os.path.join(install_path, "support", "launch.properties")
-cpath_positions = []
 
 # Add FlatLaf to the list of jar files
 with fileinput.FileInput(launch_sh_path, inplace=True, backup=".bak") as fp:
     for line in fp:
-        if line.strip().startswith("CPATH=") and "flatlaf" not in line:
-            print(f"{line.rstrip()[:-1]}:${{INSTALL_DIR}}/flatlaf-0.43.jar\"")
+        if line.strip().startswith(cpath) and "flatlaf" not in line:
+            if os.name == "nt":
+                print(f"{line.rstrip()}{install_dir}flatlaf-0.43.jar")
+            else:
+                print(f"{line.rstrip()[:-1]}{install_dir}flatlaf-0.43.jar\"")
         else:
             print(line, end="")
 
@@ -86,7 +97,7 @@ else:
     version_path = f".ghidra-{version}"
 
 ghidra_home_path = os.path.join(Path.home(), ".ghidra", version_path)
-perferences_path = os.path.join(ghidra_home_path, "preferences")
+preferences_path = os.path.join(ghidra_home_path, "preferences")
 code_browser_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd")
 code_browser_bak_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd.bak")
 
@@ -94,7 +105,7 @@ print(f"Using Ghidra home path: {ghidra_home_path}")
 
 # Check if the current L&f is system
 using_system = False
-with open(perferences_path, "r") as fp:
+with open(preferences_path, "r") as fp:
     for line in fp:
         if "LastLookAndFeel=System" in line:
             using_system = True
@@ -102,7 +113,7 @@ with open(perferences_path, "r") as fp:
 
 # Set the L&f to system
 if not using_system:
-    with open(perferences_path, "a") as fp:
+    with open(preferences_path, "a") as fp:
         fp.write("LastLookAndFeel=System\n")
 
 # Backup the current tcd

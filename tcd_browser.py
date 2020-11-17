@@ -69,7 +69,7 @@ class TCDBrowser:
                     element = element[0]
                     if isinstance(option, Wrapped):
                         for state in option.states:
-                            e = [_ for _ in category.iter() if _.get("NAME") == state.name][0]
+                            e = [_ for _ in element.iter() if _.get("NAME") == state.name][0]
                             e.set("VALUE", state.value)
                     else:
                         element.set("VALUE", option.value)
