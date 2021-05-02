@@ -53,7 +53,7 @@ with open(properties_path, "r") as fp:
 print(f"Detected Ghidra v{version}")
 
 flatlaf_path = os.path.join(install_path, "flatlaf-0.43.jar")
-flatlaf_url = "https://bintray.com/jformdesigner/flatlaf/download_file?file_path=com/formdev/flatlaf/0.43/flatlaf-0.43.jar"
+flatlaf_url = "https://repo1.maven.org/maven2/com/formdev/flatlaf/0.43/flatlaf-0.43.jar"
 
 # Download the FlatLaf jar
 if not os.path.exists(flatlaf_path):
