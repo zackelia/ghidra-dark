@@ -12,6 +12,7 @@ from preferences import preferences
 parser = argparse.ArgumentParser(description="Install Ghidra dark theme")
 parser.add_argument("--path", dest="install_path", type=str, default=None,
                     help="The installation path for Ghidra")
+parser.add_argument("--user", type=str, default=None, help="the user to install for")
 args = parser.parse_args()
 
 if os.name == "nt":
@@ -96,7 +97,12 @@ if tuple(map(int, (version.split(".")))) > (9, 0, 4):
 else:
     version_path = f".ghidra-{version}"
 
-ghidra_home_path = os.path.join(Path.home(), ".ghidra", version_path)
+if args.user:
+    home = os.path.expanduser(f"~{args.user}")
+else:
+    home = Path.home()
+
+ghidra_home_path = os.path.join(home, ".ghidra", version_path)
 preferences_path = os.path.join(ghidra_home_path, "preferences")
 code_browser_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd")
 code_browser_bak_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd.bak")
