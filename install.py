@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import urllib.request
+import re
 
 from tcd_browser import TCDBrowser
 from preferences import preferences
@@ -92,7 +93,8 @@ if not flatlaf_set:
 
 # _PUBLIC was appended to the name after 9.0.4
 # The "-" after .ghidra was changed to "_" after 9.0.4
-if tuple(map(int, (version.split(".")))) > (9, 0, 4):
+version_number = '.'.join(re.findall("[0-9]+", version))
+if tuple(map(int, (version_number.split(".")))) > (9, 0, 4):
     version_path = f".ghidra_{version}_PUBLIC"
 else:
     version_path = f".ghidra-{version}"
