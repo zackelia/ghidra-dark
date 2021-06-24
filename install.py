@@ -109,6 +109,9 @@ preferences_path = os.path.join(ghidra_home_path, "preferences")
 code_browser_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd")
 code_browser_bak_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd.bak")
 
+debugger_path = os.path.join(ghidra_home_path, "tools", "_debugger.tcd")
+debugger_bak_path = os.path.join(ghidra_home_path, "tools", "_debugger.tcd.bak")
+
 print(f"Using Ghidra home path: {ghidra_home_path}")
 
 # Check if the current L&f is system
@@ -126,6 +129,9 @@ if not using_system:
 
 # Backup the current tcd
 shutil.copy(code_browser_path, code_browser_bak_path)
-
 browser = TCDBrowser(code_browser_path)
 browser.update(preferences)
+
+shutil.copy(debugger_path, debugger_bak_path)
+debugger = TCDBrowser(debugger_path)
+debugger.update(preferences)
