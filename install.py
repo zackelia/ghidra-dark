@@ -106,11 +106,6 @@ else:
 
 ghidra_home_path = os.path.join(home, ".ghidra", version_path)
 preferences_path = os.path.join(ghidra_home_path, "preferences")
-code_browser_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd")
-code_browser_bak_path = os.path.join(ghidra_home_path, "tools", "_code_browser.tcd.bak")
-
-debugger_path = os.path.join(ghidra_home_path, "tools", "_debugger.tcd")
-debugger_bak_path = os.path.join(ghidra_home_path, "tools", "_debugger.tcd.bak")
 
 print(f"Using Ghidra home path: {ghidra_home_path}")
 
@@ -127,11 +122,16 @@ if not using_system:
     with open(preferences_path, "a") as fp:
         fp.write("LastLookAndFeel=System\n")
 
-# Backup the current tcd
-shutil.copy(code_browser_path, code_browser_bak_path)
-browser = TCDBrowser(code_browser_path)
-browser.update(preferences)
-
-shutil.copy(debugger_path, debugger_bak_path)
-debugger = TCDBrowser(debugger_path)
-debugger.update(preferences)
+# Backup and modify the current tcd files
+tcd_list = ["_code_browser.tcd", "_debugger.tcd", "_version _tracking.tcd", "Version Tracking (DESTINATION TOOL).tool", "Version Tracking (SOURCE TOOL).tool"]
+for tcd in tcd_list:
+    tcd_path = os.path.join(ghidra_home_path, "tools", tcd)
+    backup_path = os.path.join(ghidra_home_path, "tools", f"{tcd}.bak")
+    try:
+        shutil.copy(tcd_path, backup_path)
+        browser = TCDBrowser(tcd_path)
+        browser.update(preferences)
+    except FileNotFoundError:
+        if tcd == "_code_browser.tcd":
+            print("Please open Ghidra at least once to fully install dark mode.")
+        # TODO: log other cases when more robust logging is done
