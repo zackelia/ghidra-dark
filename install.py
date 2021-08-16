@@ -91,18 +91,21 @@ if not flatlaf_set:
     with open(launch_properties_path, "a") as fp:
         fp.write("\nVMARGS=-Dswing.systemlaf=com.formdev.flatlaf.FlatDarkLaf")
 
+if args.user:
+    home = os.path.expanduser(f"~{args.user}")
+else:
+    home = Path.home()
+
 # _PUBLIC was appended to the name after 9.0.4
 # The "-" after .ghidra was changed to "_" after 9.0.4
 version_number = '.'.join(re.findall("[0-9]+", version))
 if tuple(map(int, (version_number.split(".")))) > (9, 0, 4):
     version_path = f".ghidra_{version}_PUBLIC"
+    # _DEV when built from source, or from some repos (Arch, Kali, etc.)
+    if not os.path.exists(os.path.join(home, ".ghidra", version_path)):
+        version_path = f".ghidra_{version}_DEV"
 else:
     version_path = f".ghidra-{version}"
-
-if args.user:
-    home = os.path.expanduser(f"~{args.user}")
-else:
-    home = Path.home()
 
 ghidra_home_path = os.path.join(home, ".ghidra", version_path)
 preferences_path = os.path.join(ghidra_home_path, "preferences")
