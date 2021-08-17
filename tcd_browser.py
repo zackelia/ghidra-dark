@@ -4,6 +4,14 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom as MD
 from preferences import Wrapped
 
+TCD_LIST = [
+    "_code_browser.tcd",
+    "_debugger.tcd",
+    "_version _tracking.tcd",
+    "Version Tracking (DESTINATION TOOL).tool",
+    "Version Tracking (SOURCE TOOL).tool",
+]
+
 class TCDBrowser:
     def __init__(self, path: str) -> None:
         self.path = path
