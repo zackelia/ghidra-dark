@@ -100,16 +100,28 @@ def get_ghidra_version(install_path: str) -> str:
     return ""
 
 
-def install_flatlaf(install_path: str):
+def install_flatlaf(
+    install_path: str,
+    version: str,
+):
     """Download (if necessary) and install FlatLaf.
 
     Args:
         install_path (str): Ghidra install path.
+        version (str): Current Ghidra Version.
     """
+    # TODO: Refactor this duplicate code
+    version_number = ".".join(re.findall("[0-9]+", version))
+    version_number = tuple(map(int, (version_number.split("."))))
     if os.name == "nt":
         launch_sh = "launch.bat"
-        install_dir = ";%INSTALL_DIR%"
-        cpath = "set CPATH="
+        # Missing quotes were added in 10.0
+        if version_number < (10, 0, 0):
+            install_dir = ";%INSTALL_DIR%"
+            cpath = "set CPATH="
+        else:
+            install_dir = ";%INSTALL_DIR%\\"
+            cpath = 'set "CPATH='
     else:
         launch_sh = "launch.sh"
         install_dir = ":${INSTALL_DIR}/"
@@ -138,7 +150,7 @@ def install_flatlaf(install_path: str):
     with fileinput.FileInput(launch_sh_path, inplace=True, backup=".bak") as fp:
         for line in fp:
             if line.strip().startswith(cpath) and "flatlaf" not in line:
-                if os.name == "nt":
+                if os.name == "nt" and version_number < (10, 0, 0):
                     print(f"{line.rstrip()}{install_dir}flatlaf-{flatlaf_version}.jar")
                 else:
                     print(
@@ -232,7 +244,7 @@ def main(args: argparse.Namespace):
     logging.debug("Using Ghidra config path %s", ghidra_config_path)
 
     logging.debug("Installing FlatLaf...")
-    install_flatlaf(ghidra_install_path)
+    install_flatlaf(ghidra_install_path, ghidra_version)
 
     logging.debug("Installing dark preferences...")
     install_dark_preferences(ghidra_config_path)
