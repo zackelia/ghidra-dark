@@ -49,7 +49,7 @@ def get_ghidra_install_path(install_path: str = None) -> str:
     ghidra_run_path = shutil.which("ghidraRun")
     if not ghidra_run_path:
         return None
-    return Path(ghidra_run_path).parents[0]
+    return Path(ghidra_run_path).resolve().parents[0]
 
 
 def get_ghidra_config_path(version: str, user: str = None) -> str:
