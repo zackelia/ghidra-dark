@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class FlatLaf:
-    def __init__(self, version="0.43"):
+    def __init__(self, version="1.6.5"):
         self.version = version
 
     def get_path(self, install_path: str):
