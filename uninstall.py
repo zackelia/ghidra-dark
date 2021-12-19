@@ -12,48 +12,10 @@ from install import (
     get_ghidra_config_path,
 )
 from tcd_browser import TCD_LIST
+from flatlaf import FlatLaf
 
 
 logger = logging.getLogger(__name__)
-
-
-def remove_flatlaf(install_path: str):
-    """Remove the flatlaf jar and remove it from launch files.
-
-    Args:
-        install_path (str): Ghidra install path.
-    """
-    if os.name == "nt":
-        launch_sh = "launch.bat"
-    else:
-        launch_sh = "launch.sh"
-
-    flatlaf_version = "0.43"
-    flatlaf_path = os.path.join(install_path, f"flatlaf-{flatlaf_version}.jar")
-    try:
-        os.remove(flatlaf_path)
-        logger.debug("Removed %s", flatlaf_path)
-    except FileNotFoundError:
-        logger.warning("Could not remove %s", flatlaf_path)
-
-    launch_sh_path = os.path.join(install_path, "support", launch_sh)
-    launch_sh_backup_path = os.path.join(install_path, "support", f"{launch_sh}.bak")
-    launch_properties_path = os.path.join(install_path, "support", "launch.properties")
-
-    if os.path.exists(launch_sh_backup_path):
-        os.remove(launch_sh_path)
-        os.rename(launch_sh_backup_path, launch_sh_path)
-        logger.debug("Restored %s", launch_sh_path)
-    else:
-        logger.warning("Could not restore %s", launch_sh_path)
-
-    with fileinput.FileInput(launch_properties_path, inplace=True) as fp:
-        for line in fp:
-            if "VMARGS=-Dswing.systemlaf=com.formdev.flatlaf.FlatDarkLaf" not in line:
-                print(line, end="")
-            else:
-                logging.debug("Restored %s", launch_properties_path)
-
 
 def remove_dark_preferences(config_path: str):
     """Restore preference files from backups.
@@ -115,7 +77,8 @@ def main(args: argparse.Namespace):
     logging.debug("Using Ghidra config path %s", ghidra_config_path)
 
     logging.debug("Removing FlatLaf...")
-    remove_flatlaf(ghidra_install_path)
+    flatlaf = FlatLaf()
+    flatlaf.remove(ghidra_install_path)
 
     logging.debug("Removing dark preferences...")
     remove_dark_preferences(ghidra_config_path)
