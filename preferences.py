@@ -66,6 +66,17 @@ preferences = {
         "Display.Color for Function names": Color(-10580601),
         "Display.Font": Font(14, 0, "Monospaced")
     },
+    "Graph": {
+        "Function Call Graph.Graph Background Color": Color(-12236470),
+        "Function Graph.Default Vertex Color": Color(-14144978),
+        "Function Graph.Graph Background Color": Color(-12236470),
+        "Function Graph.Edge Color - Conditional Jump ": Color(-10518115),
+        "Function Graph.Edge Color - Conditional Jump Highlight": Color(-10510140),
+        "Function Graph.Edge Color - Fallthrough ": Color(-5946814),
+        "Function Graph.Edge Color - Fallthrough Highlight": Color(-5944240),
+        "Function Graph.Edge Color - Unconditional Jump ": Color(-7564224),
+        "Function Graph.Edge Color - Unconditional Jump Highlight": Color(-7560616),
+    },
     "Search": {
         "Highlight Color for Current Match": Color(-11974594),
         "Highlight Color": Color(-11974594),
