@@ -13,7 +13,7 @@ class FlatLaf:
         self.version = version
 
     def get_path(self, install_path: str):
-        return os.path.join(install_path, f"flatlaf-{self.version}.jar")
+        return os.path.join(install_path, "Ghidra/patch/", f"flatlaf-{self.version}.jar")
 
     def get_url(self):
         return (
@@ -31,19 +31,6 @@ class FlatLaf:
         # TODO: Refactor this duplicate code
         version_number = ".".join(re.findall("[0-9]+", version))
         version_number = tuple(map(int, (version_number.split("."))))
-        if os.name == "nt":
-            launch_sh = "launch.bat"
-            # Missing quotes were added in 10.0
-            if version_number < (10, 0, 0):
-                install_dir = ";%INSTALL_DIR%"
-                cpath = "set CPATH="
-            else:
-                install_dir = ";%INSTALL_DIR%\\"
-                cpath = 'set "CPATH='
-        else:
-            launch_sh = "launch.sh"
-            install_dir = ":${INSTALL_DIR}/"
-            cpath = "CPATH="
 
         flatlaf_path = self.get_path(install_path)
         flatlaf_url = self.get_url()
@@ -57,23 +44,9 @@ class FlatLaf:
         else:
             logging.debug("Flatlaf already downloaded: %s", flatlaf_path)
 
-        launch_sh_path = os.path.join(install_path, "support", launch_sh)
         launch_properties_path = os.path.join(
             install_path, "support", "launch.properties"
         )
-
-        # Add FlatLaf to the list of jar files
-        with fileinput.FileInput(launch_sh_path, inplace=True, backup=".bak") as fp:
-            for line in fp:
-                if line.strip().startswith(cpath) and "flatlaf" not in line:
-                    if os.name == "nt" and version_number < (10, 0, 0):
-                        print(f"{line.rstrip()}{install_dir}flatlaf-{self.version}.jar")
-                    else:
-                        print(
-                            f'{line.rstrip()[:-1]}{install_dir}flatlaf-{self.version}.jar"'
-                        )
-                else:
-                    print(line, end="")
 
         # Check if FlatLaf is the system L&f
         flatlaf_set = False
@@ -95,10 +68,6 @@ class FlatLaf:
         Args:
             install_path (str): Ghidra install path.
         """
-        if os.name == "nt":
-            launch_sh = "launch.bat"
-        else:
-            launch_sh = "launch.sh"
 
         flatlaf_path = self.get_path(install_path)
         try:
@@ -107,20 +76,9 @@ class FlatLaf:
         except FileNotFoundError:
             logger.warning("Could not remove %s", flatlaf_path)
 
-        launch_sh_path = os.path.join(install_path, "support", launch_sh)
-        launch_sh_backup_path = os.path.join(
-            install_path, "support", f"{launch_sh}.bak"
-        )
         launch_properties_path = os.path.join(
             install_path, "support", "launch.properties"
         )
-
-        if os.path.exists(launch_sh_backup_path):
-            os.remove(launch_sh_path)
-            os.rename(launch_sh_backup_path, launch_sh_path)
-            logger.debug("Restored %s", launch_sh_path)
-        else:
-            logger.warning("Could not restore %s", launch_sh_path)
 
         with fileinput.FileInput(launch_properties_path, inplace=True) as fp:
             for line in fp:
