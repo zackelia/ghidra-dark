@@ -11,6 +11,12 @@ ghidra-dark provides a simple to use script to install the FlatLaf dark theme, c
 $ python3 install.py
 ```
 
+If installing as root (e.g. `sudo`), the user to install for may need to be specified:
+
+```
+$ sudo python3 install.py -u [user]
+```
+
 ![](ghidra-dark.png)
 
 ## Uninstall
