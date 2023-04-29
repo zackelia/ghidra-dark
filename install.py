@@ -89,6 +89,12 @@ def get_ghidra_config_path(version: str, user: str = None) -> str:
     else:
         version_path = f".ghidra-{version}"
 
+    if tuple(map(int, (version_number.split(".")))) >= (10, 3):
+        logger.fatal(
+            "Ghidra >=10.3 not supported. Check out ghidra-dark-theme (https://github.com/zackelia/ghidra-dark-theme) instead!"
+        )
+        sys.exit(1)
+
     return os.path.join(home, ".ghidra", version_path)
 
 
